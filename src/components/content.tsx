@@ -2,7 +2,7 @@ import PomodoroTechnique from "./pomodoro-technique"
 import Pomofocus from "./pomofocus"
 import UsePomodoroTechnique from "./use-pomodoro-technique"
 // import Featrures from './features';
-import { useTheme } from '../context/theme-context'; // Adjust the path as necessary
+import { useTheme } from '../context/theme-context'; 
 import '../index.css';
 
 const Content = () => {

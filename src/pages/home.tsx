@@ -6,7 +6,7 @@ import { useTheme } from '../context/theme-context';
 
 const Home = () => {
   const [showButton, setShowButton] = useState(false);
-  const { themeColor, setThemeColor } = useTheme();
+  const { themeColor } = useTheme();
 
   useEffect(() => {
     const handleScroll = () => {
