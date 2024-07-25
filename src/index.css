@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+*{
+  font-family: Varela Round;
+}
+
+.transition-bg {
+  transition: background-color 1s ease;
+}
+
+.transition-color {
+  transition: color 1s ease;
+}
