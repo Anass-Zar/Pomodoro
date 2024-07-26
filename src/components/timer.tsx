@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTheme } from '../context/theme-context';
 import { LuRefreshCcw } from "react-icons/lu";
 import { IoSettingsSharp } from "react-icons/io5";
@@ -6,12 +6,17 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../index.css';
 
+// Import your audio files
+import clickSound from '../assets/click.mp3';
+import endSound from '../assets/end.mp3';
 
 const Timer = () => {
   const [timer, setTimer] = useState(1500);
   const { themeColor, setThemeColor } = useTheme();
   const [activeButton, setActiveButton] = useState('Pomodoro');
   const [startAndPause, setStartAndPause] = useState(false);
+  const clickAudio = useMemo(() => new Audio(clickSound), []);
+  const endAudio = useMemo(() => new Audio(endSound), []);
 
   const getInitialTime = (buttonName: string) => {
     switch (buttonName) {
@@ -39,20 +44,28 @@ const Timer = () => {
 
   const handleButtonStartAndPause = () => {
     setStartAndPause(!startAndPause);
+    clickAudio.play();
   };
-  
+
   const handleButtonSettings = () => {
-    toast.info("We are working on it for now")
+    toast.info("Settings functionality is under development.");
   };
 
   useEffect(() => {
-    if (startAndPause === true) {
+    if (startAndPause) {
       const interval = setInterval(() => {
-        setTimer(prevTimer => (prevTimer > 0 ? prevTimer - 1 : 0));
+        setTimer(prevTimer => {
+          if (prevTimer === 1) {
+            endAudio.play();
+            setStartAndPause(false);
+            setTimer(getInitialTime(activeButton));
+          }
+          return prevTimer > 0 ? prevTimer - 1 : 0;
+        });
       }, 1000);
       return () => clearInterval(interval);
     }
-  }, [startAndPause]);
+  }, [startAndPause, activeButton, endAudio]);
 
   const formatTime = (time: number) => {
     const minutes = String(Math.floor(time / 60)).padStart(2, '0');
@@ -86,21 +99,21 @@ const Timer = () => {
           <button
             className={`border-2 py-1.5 px-6 rounded-3xl ${activeButton === 'Pomodoro' ? 'bg-gray-100' : ''}`}
             style={{ color: activeButton === 'Pomodoro' ? themeColors[themeColor] : '#f9fafb', transition: 'color 0.5s ease' }}
-            onClick={() => handleButtonClick('Pomodoro',1500)}
+            onClick={() => handleButtonClick('Pomodoro', 1500)}
           >
             Pomodoro
           </button>
           <button
             className={`border-2 py-1.5 px-6 rounded-3xl ${activeButton === 'Short Break' ? 'bg-gray-100' : ''}`}
             style={{ color: activeButton === 'Short Break' ? themeColors[themeColor] : '#f9fafb', transition: 'color 0.5s ease' }}
-            onClick={() => handleButtonClick('Short Break',300)}
+            onClick={() => handleButtonClick('Short Break', 300)}
           >
             Short Break
           </button>
           <button
             className={`border-2 py-1.5 px-6 rounded-3xl ${activeButton === 'Long Break' ? 'bg-gray-100' : ''}`}
             style={{ color: activeButton === 'Long Break' ? themeColors[themeColor] : '#f9fafb', transition: 'color 0.5s ease' }}
-            onClick={() => handleButtonClick('Long Break',900)}
+            onClick={() => handleButtonClick('Long Break', 900)}
           >
             Long Break
           </button>
